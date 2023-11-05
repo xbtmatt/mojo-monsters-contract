@@ -9,158 +9,120 @@ module mojo_monsters::enums {
     /// You have provided an invalid type.
     const E_INVALID_TYPE: u64 = 0;
 
-    // Elements
-    // ---------------------------------------------------------------
-    const FIRE: vector<u8> = b"FIRE";
-    const EARTH: vector<u8> = b"EARTH";
-    const WATER: vector<u8> = b"WATER";
-    const AIR: vector<u8> = b"AIR";
-    const CRYSTAL: vector<u8> = b"CRYSTAL";
-    const ELECTRICITY: vector<u8> = b"ELECTRICITY";
-    const ETHER: vector<u8> = b"ETHER";
     const ELEMENT_NAMES: vector<vector<u8>> = vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ];
-    const ELEMENT_INDEX: vector<u8> = vector<u8> [ 0, 1, 2, 3, 4, 5, 6 ];
-
-    // Affinities
-    // ---------------------------------------------------------------
-    const SOLID: vector<u8> = b"SOLID";
-    const SWIFT: vector<u8> = b"SWIFT";
-    const HARMONIC: vector<u8> = b"HARMONIC";
-    const PSYCHE: vector<u8> = b"PSYCHE";
-    const ADAPTIVE: vector<u8> = b"ADAPTIVE";
-    const DISRUPTIVE: vector<u8> = b"DISRUPTIVE";
     const AFFINITY_NAMES: vector<vector<u8>> = vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ];
-    const AFFINITY_INDEX: vector<u8> = vector<u8>[ 0, 1, 2, 3, 4, 5 ];
-
-    // Attributes (element + affinity)
-    // ---------------------------------------------------------------
-    const MAX_ENERGY: vector<u8> = b"MAX_ENERGY";
-    const ENERGY_RECHARGE_RATE: vector<u8> = b"ENERGY_RECHARGE_RATE";
-    const ENERGY_EFFICIENCY: vector<u8> = b"ENERGY_EFFICIENCY";
-
-    const MAX_HUNGER: vector<u8> = b"MAX_HUNGER";
-    const HUNGER_RESISTANCE: vector<u8> = b"HUNGER_RESISTANCE";
-
-    const MAX_THIRST: vector<u8> = b"MAX_THIRST";
-    const THIRST_RESISTANCE: vector<u8> = b"THIRST_RESISTANCE";
-
-    const MAX_HAPPINESS: vector<u8> = b"MAX_HAPPINESS";
-    const MAX_JOY: vector<u8> = b"MAX_JOY";
-    const JOY_RESPONSE: vector<u8> = b"JOY_RESPONSE";
-    const JOY_ABILITY: vector<u8> = b"JOY_ABILITY";
-
-    const MAX_IMMUNITY: vector<u8> = b"MAX_IMMUNITY";
-    const IMMUNITY_THRESHOLD: vector<u8> = b"IMMUNITY_THRESHOLD";
-    const IMMUNITY_PERSISTENCE: vector<u8> = b"IMMUNITY_PERSISTENCE";
-
-    const MAX_INTELLIGENCE: vector<u8> = b"MAX_INTELLIGENCE";
-    const INTELLIGENCE_POTENTIAL: vector<u8> = b"INTELLIGENCE_POTENTIAL";
 
     public inline fun get_element_names(): vector<String> {
-        vector::map_ref(&ELEMENT_NAMES, |x| { string::utf8(*x) })
+        // vector::map_ref(&ELEMENT_NAMES, |x| { string::utf8(*x) })
+        vector::map_ref(&vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ], |x| { string::utf8(*x) })
     }
     
     public inline fun get_affinity_names(): vector<String> {
-        vector::map_ref(&AFFINITY_NAMES, |x| { string::utf8(*x) })
+        // vector::map_ref(&AFFINITY_NAMES, |x| { string::utf8(*x) })
+        vector::map_ref(&vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ], |x| { string::utf8(*x) })
     }
 
-    public inline fun fire(): String { string::utf8(FIRE) }
-    public inline fun earth(): String { string::utf8(EARTH) }
-    public inline fun water(): String { string::utf8(WATER) }
-    public inline fun air(): String { string::utf8(AIR) }
-    public inline fun crystal(): String { string::utf8(CRYSTAL) }
-    public inline fun electricity(): String { string::utf8(ELECTRICITY) }
-    public inline fun ether(): String { string::utf8(ETHER) }
+    public inline fun fire(): String { string::utf8(b"FIRE") }
+    public inline fun earth(): String { string::utf8(b"EARTH") }
+    public inline fun water(): String { string::utf8(b"WATER") }
+    public inline fun air(): String { string::utf8(b"AIR") }
+    public inline fun crystal(): String { string::utf8(b"CRYSTAL") }
+    public inline fun electricity(): String { string::utf8(b"ELECTRICITY") }
+    public inline fun ether(): String { string::utf8(b"ETHER") }
 
-    public inline fun solid(): String { string::utf8(SOLID) }
-    public inline fun swift(): String { string::utf8(SWIFT) }
-    public inline fun harmonic(): String { string::utf8(HARMONIC) }
-    public inline fun psyche(): String { string::utf8(PSYCHE) }
-    public inline fun adaptive(): String { string::utf8(ADAPTIVE) }
-    public inline fun disruptive(): String { string::utf8(DISRUPTIVE) }
+    public inline fun solid(): String { string::utf8(b"SOLID") }
+    public inline fun swift(): String { string::utf8(b"SWIFT") }
+    public inline fun harmonic(): String { string::utf8(b"HARMONIC") }
+    public inline fun psyche(): String { string::utf8(b"PSYCHE") }
+    public inline fun adaptive(): String { string::utf8(b"ADAPTIVE") }
+    public inline fun disruptive(): String { string::utf8(b"DISRUPTIVE") }
     
     public inline fun element_name<T>(): String {
         // elements
-        if (type_of<T>() == type_of<Fire>())        { return fire() };
-        if (type_of<T>() == type_of<Earth>())       { return earth() };
-        if (type_of<T>() == type_of<Water>())       { return water() };
-        if (type_of<T>() == type_of<Air>())         { return air() };
-        if (type_of<T>() == type_of<Crystal>())     { return crystal() };
-        if (type_of<T>() == type_of<Electricity>()) { return electricity() };
-        if (type_of<T>() == type_of<Ether>())       { return ether() };
-        abort error::invalid_argument(E_INVALID_TYPE)
+             if (type_of<T>() == type_of<Fire>())        { fire() }
+        else if (type_of<T>() == type_of<Earth>())       { earth() }
+        else if (type_of<T>() == type_of<Water>())       { water() }
+        else if (type_of<T>() == type_of<Air>())         { air() }
+        else if (type_of<T>() == type_of<Crystal>())     { crystal() }
+        else if (type_of<T>() == type_of<Electricity>()) { electricity() }
+        else if (type_of<T>() == type_of<Ether>())       { ether() }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 
     public inline fun affinity_name<T>(): String {
-        if (type_of<T>() == type_of<Solid>())       { return solid() };
-        if (type_of<T>() == type_of<Swift>())       { return swift() };
-        if (type_of<T>() == type_of<Harmonic>())    { return harmonic() };
-        if (type_of<T>() == type_of<Psyche>())      { return psyche() };
-        if (type_of<T>() == type_of<Adaptive>())    { return adaptive() };
-        if (type_of<T>() == type_of<Disruptive>())  { return disruptive() };
-        abort error::invalid_argument(E_INVALID_TYPE)
+             if (type_of<T>() == type_of<Solid>())       { solid() }
+        else if (type_of<T>() == type_of<Swift>())       { swift() }
+        else if (type_of<T>() == type_of<Harmonic>())    { harmonic() }
+        else if (type_of<T>() == type_of<Psyche>())      { psyche() }
+        else if (type_of<T>() == type_of<Adaptive>())    { adaptive() }
+        else if (type_of<T>() == type_of<Disruptive>())  { disruptive() }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 
-    public inline fun element<T>(): u8 {
-        if (type_of<T>() == type_of<Fire>())        { return 0 };
-        if (type_of<T>() == type_of<Earth>())       { return 1 };
-        if (type_of<T>() == type_of<Water>())       { return 2 };
-        if (type_of<T>() == type_of<Air>())         { return 3 };
-        if (type_of<T>() == type_of<Crystal>())     { return 4 };
-        if (type_of<T>() == type_of<Electricity>()) { return 5 };
-        if (type_of<T>() == type_of<Ether>())       { return 6 };
-        abort error::invalid_argument(E_INVALID_TYPE)
+    // public inline fun element<T>(): u8 {
+    public fun element<T>(): u8 {
+             if (type_of<T>() == type_of<Fire>())        { 0 }
+        else if (type_of<T>() == type_of<Earth>())       { 1 }
+        else if (type_of<T>() == type_of<Water>())       { 2 }
+        else if (type_of<T>() == type_of<Air>())         { 3 }
+        else if (type_of<T>() == type_of<Crystal>())     { 4 }
+        else if (type_of<T>() == type_of<Electricity>()) { 5 }
+        else if (type_of<T>() == type_of<Ether>())       { 6 }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
     
-    public inline fun affinity<T>(): u8 {
-        if (type_of<T>() == type_of<Solid>())       { return 0 };
-        if (type_of<T>() == type_of<Swift>())       { return 1 };
-        if (type_of<T>() == type_of<Harmonic>())    { return 2 };
-        if (type_of<T>() == type_of<Psyche>())      { return 3 };
-        if (type_of<T>() == type_of<Adaptive>())    { return 4 };
-        if (type_of<T>() == type_of<Disruptive>())  { return 5 };
-        abort error::invalid_argument(E_INVALID_TYPE)
+    // public inline fun affinity<T>(): u8 {
+    public fun affinity<T>(): u8 {
+             if (type_of<T>() == type_of<Solid>())       { 0 }
+        else if (type_of<T>() == type_of<Swift>())       { 1 }
+        else if (type_of<T>() == type_of<Harmonic>())    { 2 }
+        else if (type_of<T>() == type_of<Psyche>())      { 3 }
+        else if (type_of<T>() == type_of<Adaptive>())    { 4 }
+        else if (type_of<T>() == type_of<Disruptive>())  { 5 }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 
-    public inline fun element_name_index(s: String): u8 {
-        if (s == fire())        { return 0 };
-        if (s == earth())       { return 1 };
-        if (s == water())       { return 2 };
-        if (s == air())         { return 3 };
-        if (s == crystal())     { return 4 };
-        if (s == electricity()) { return 5 };
-        if (s == ether())       { return 6 };
-        abort error::invalid_argument(E_INVALID_TYPE)
+    // public inline fun element_name_index(s: String): u8 {
+    public fun element_name_index(s: String): u8 {
+             if (s == fire())        { 0 }
+        else if (s == earth())       { 1 }
+        else if (s == water())       { 2 }
+        else if (s == air())         { 3 }
+        else if (s == crystal())     { 4 }
+        else if (s == electricity()) { 5 }
+        else if (s == ether())       { 6 }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 
     public inline fun affinity_name_index(s: String): u8 {
-        if (s == solid())       { return 0 };
-        if (s == swift())       { return 1 };
-        if (s == harmonic())    { return 2 };
-        if (s == psyche())      { return 3 };
-        if (s == adaptive())    { return 4 };
-        if (s == disruptive())  { return 5 };
-        abort error::invalid_argument(E_INVALID_TYPE)
+             if (s == solid())       { 0 }
+        else if (s == swift())       { 1 }
+        else if (s == harmonic())    { 2 }
+        else if (s == psyche())      { 3 }
+        else if (s == adaptive())    { 4 }
+        else if (s == disruptive())  { 5 }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 
-    public inline fun attribute(s: String): u8 {
-        if (s == string::utf8(MAX_ENERGY))              { return 0 };
-        if (s == string::utf8(ENERGY_RECHARGE_RATE))    { return 1 };
-        if (s == string::utf8(ENERGY_EFFICIENCY))       { return 2 };
-        if (s == string::utf8(MAX_HUNGER))              { return 3 };
-        if (s == string::utf8(HUNGER_RESISTANCE))       { return 4 };
-        if (s == string::utf8(MAX_THIRST))              { return 5 };
-        if (s == string::utf8(THIRST_RESISTANCE))       { return 6 };
-        if (s == string::utf8(MAX_HAPPINESS))           { return 7 };
-        if (s == string::utf8(MAX_JOY))                 { return 8 };
-        if (s == string::utf8(JOY_RESPONSE))            { return 9 };
-        if (s == string::utf8(JOY_ABILITY))             { return 10 };
-        if (s == string::utf8(MAX_IMMUNITY))            { return 11 };
-        if (s == string::utf8(IMMUNITY_THRESHOLD))      { return 12 };
-        if (s == string::utf8(IMMUNITY_PERSISTENCE))    { return 13 };
-        if (s == string::utf8(MAX_INTELLIGENCE))        { return 14 };
-        if (s == string::utf8(INTELLIGENCE_POTENTIAL))  { return 15 };
-        abort error::invalid_argument(E_INVALID_TYPE)
+    // public inline fun attribute(s: String): u8 {
+    public fun attribute(s: String): u8 {
+             if (s == string::utf8(b"MAX_ENERGY"))              { 0 }
+        else if (s == string::utf8(b"ENERGY_RECHARGE_RATE"))    { 1 }
+        else if (s == string::utf8(b"ENERGY_EFFICIENCY"))       { 2 }
+        else if (s == string::utf8(b"MAX_HUNGER"))              { 3 }
+        else if (s == string::utf8(b"HUNGER_RESISTANCE"))       { 4 }
+        else if (s == string::utf8(b"MAX_THIRST"))              { 5 }
+        else if (s == string::utf8(b"THIRST_RESISTANCE"))       { 6 }
+        else if (s == string::utf8(b"MAX_HAPPINESS"))           { 7 }
+        else if (s == string::utf8(b"MAX_JOY"))                 { 8 }
+        else if (s == string::utf8(b"JOY_RESPONSE"))            { 9 }
+        else if (s == string::utf8(b"JOY_ABILITY"))             { 10 }
+        else if (s == string::utf8(b"MAX_IMMUNITY"))            { 11 }
+        else if (s == string::utf8(b"IMMUNITY_THRESHOLD"))      { 12 }
+        else if (s == string::utf8(b"IMMUNITY_PERSISTENCE"))    { 13 }
+        else if (s == string::utf8(b"MAX_INTELLIGENCE"))        { 14 }
+        else if (s == string::utf8(b"INTELLIGENCE_POTENTIAL"))  { 15 }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 }
 
@@ -171,7 +133,45 @@ module mojo_monsters::enums_tests {
     #[test_only] use mojo_monsters::elements::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
     #[test_only] use mojo_monsters::affinity::{Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
     #[test_only] use mojo_monsters::enums::{element_name, affinity_name, element_name_index, element, affinity, affinity_name_index, get_element_names, get_affinity_names};
-    #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, solid, swift, harmonic, psyche, adaptive, disruptive};
+    #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
+
+    // Elements
+    // ---------------------------------------------------------------
+    #[test_only] const FIRE: vector<u8> = b"FIRE";
+    #[test_only] const EARTH: vector<u8> = b"EARTH";
+    #[test_only] const WATER: vector<u8> = b"WATER";
+    #[test_only] const AIR: vector<u8> = b"AIR";
+    #[test_only] const CRYSTAL: vector<u8> = b"CRYSTAL";
+    #[test_only] const ELECTRICITY: vector<u8> = b"ELECTRICITY";
+    #[test_only] const ETHER: vector<u8> = b"ETHER";
+
+    // Affinities
+    // ---------------------------------------------------------------
+    #[test_only] const SOLID: vector<u8> = b"SOLID";
+    #[test_only] const SWIFT: vector<u8> = b"SWIFT";
+    #[test_only] const HARMONIC: vector<u8> = b"HARMONIC";
+    #[test_only] const PSYCHE: vector<u8> = b"PSYCHE";
+    #[test_only] const ADAPTIVE: vector<u8> = b"ADAPTIVE";
+    #[test_only] const DISRUPTIVE: vector<u8> = b"DISRUPTIVE";
+
+    // Attributes (element + affinity)
+    // ---------------------------------------------------------------
+    #[test_only] const MAX_ENERGY: vector<u8> = b"MAX_ENERGY";
+    #[test_only] const ENERGY_RECHARGE_RATE: vector<u8> = b"ENERGY_RECHARGE_RATE";
+    #[test_only] const ENERGY_EFFICIENCY: vector<u8> = b"ENERGY_EFFICIENCY";
+    #[test_only] const MAX_HUNGER: vector<u8> = b"MAX_HUNGER";
+    #[test_only] const HUNGER_RESISTANCE: vector<u8> = b"HUNGER_RESISTANCE";
+    #[test_only] const MAX_THIRST: vector<u8> = b"MAX_THIRST";
+    #[test_only] const THIRST_RESISTANCE: vector<u8> = b"THIRST_RESISTANCE";
+    #[test_only] const MAX_HAPPINESS: vector<u8> = b"MAX_HAPPINESS";
+    #[test_only] const MAX_JOY: vector<u8> = b"MAX_JOY";
+    #[test_only] const JOY_RESPONSE: vector<u8> = b"JOY_RESPONSE";
+    #[test_only] const JOY_ABILITY: vector<u8> = b"JOY_ABILITY";
+    #[test_only] const MAX_IMMUNITY: vector<u8> = b"MAX_IMMUNITY";
+    #[test_only] const IMMUNITY_THRESHOLD: vector<u8> = b"IMMUNITY_THRESHOLD";
+    #[test_only] const IMMUNITY_PERSISTENCE: vector<u8> = b"IMMUNITY_PERSISTENCE";
+    #[test_only] const MAX_INTELLIGENCE: vector<u8> = b"MAX_INTELLIGENCE";
+    #[test_only] const INTELLIGENCE_POTENTIAL: vector<u8> = b"INTELLIGENCE_POTENTIAL";
 
     #[test]
     fun test_enum_indices() {
@@ -207,12 +207,42 @@ module mojo_monsters::enums_tests {
 
         // we will likely copy and paste this a lot to use as fake enums...ensure it's accurate. (this is painful)
         vector::enumerate_ref(&get_element_names(), |i, e| {
-            std::debug::print(&i);
-            std::debug::print(e);
             assert!(element_name_index(*e) == (i as u8), 0);
-            let a = vector::borrow(&get_affinity_names(), i);
-            assert!(affinity_name_index(*a) == (i as u8), 0);
+            if (i < vector::length(&get_affinity_names())) {
+                let a = vector::borrow(&get_affinity_names(), i);
+                assert!(affinity_name_index(*a) == (i as u8), 0);
+            };
         });
-    }
 
+        assert!(fire() == string::utf8(FIRE), 0);
+        assert!(earth() == string::utf8(EARTH), 1);
+        assert!(water() == string::utf8(WATER), 2);
+        assert!(air() == string::utf8(AIR), 3);
+        assert!(crystal() == string::utf8(CRYSTAL), 4);
+        assert!(electricity() == string::utf8(ELECTRICITY), 5);
+        assert!(ether() == string::utf8(ETHER), 6);
+        assert!(solid() == string::utf8(SOLID), 7);
+        assert!(swift() == string::utf8(SWIFT), 8);
+        assert!(harmonic() == string::utf8(HARMONIC), 9);
+        assert!(psyche() == string::utf8(PSYCHE), 10);
+        assert!(adaptive() == string::utf8(ADAPTIVE), 11);
+        assert!(disruptive() == string::utf8(DISRUPTIVE), 12);
+
+        assert!(attribute(string::utf8(MAX_ENERGY)) == 0, 0);
+        assert!(attribute(string::utf8(ENERGY_RECHARGE_RATE)) == 1, 1);
+        assert!(attribute(string::utf8(ENERGY_EFFICIENCY)) == 2, 2);
+        assert!(attribute(string::utf8(MAX_HUNGER)) == 3, 3);
+        assert!(attribute(string::utf8(HUNGER_RESISTANCE)) == 4, 4);
+        assert!(attribute(string::utf8(MAX_THIRST)) == 5, 5);
+        assert!(attribute(string::utf8(THIRST_RESISTANCE)) == 6, 6);
+        assert!(attribute(string::utf8(MAX_HAPPINESS)) == 7, 7);
+        assert!(attribute(string::utf8(MAX_JOY)) == 8, 8);
+        assert!(attribute(string::utf8(JOY_RESPONSE)) == 9, 9);
+        assert!(attribute(string::utf8(JOY_ABILITY)) == 10, 10);
+        assert!(attribute(string::utf8(MAX_IMMUNITY)) == 11, 11);
+        assert!(attribute(string::utf8(IMMUNITY_THRESHOLD)) == 12, 12);
+        assert!(attribute(string::utf8(IMMUNITY_PERSISTENCE)) == 13, 13);
+        assert!(attribute(string::utf8(MAX_INTELLIGENCE)) == 14, 14);
+        assert!(attribute(string::utf8(INTELLIGENCE_POTENTIAL)) == 15, 15);
+    }
 }

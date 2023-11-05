@@ -12,4 +12,4 @@ aptos_token_objects = "0x4"
 mojo_monsters = "_"
 
 [dev-addresses]
-mojo_monsters="0xbeefcafe"
+mojo_monsters="0xF"
