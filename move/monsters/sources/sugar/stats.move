@@ -8,7 +8,7 @@ module mojo_monsters::stats {
 
     const ELEMENT_NAMES: vector<vector<u8>> = vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ];
     const AFFINITY_NAMES: vector<vector<u8>> = vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ];
-    const BASE_ATTRIBUTE: u8 = 100;
+    const BASE_ATTRIBUTE: u64 = 100;
     const MULTIPLIER_KEY: vector<u8> = b"MULTIPLIERS";
 
     /// You are not authorized to perform this action.
@@ -19,6 +19,8 @@ module mojo_monsters::stats {
     const E_INCORRECT_NUM_ENUMS: u64 = 2;
     /// You've passed in an invalid type.
     const E_INVALID_TYPE: u64 = 2;
+    /// You've passed in invalid arguments that summed to a negative number.
+    const E_ARITHMETIC_ERROR: u64 = 3;
 
     struct AttributeModifiers has key {
         inner: SimpleMap<String, SimpleMap<String, I64>>,
@@ -39,6 +41,12 @@ module mojo_monsters::stats {
                 I64 { neg: b.neg, value: b.value - a.value }
             }
         }
+    }
+
+    inline fun add_assert_positive(a: I64, b: I64): u64 {
+        let result = add_I64(a, b);
+        assert!(!result.neg, error::invalid_argument(E_ARITHMETIC_ERROR));
+        result.value
     }
 
     // purely for readability/maintainability's sake
@@ -166,11 +174,16 @@ module mojo_monsters::stats {
     }
 
 
-    fun get_mojo_modifier<Element, Affinity>(attribute: String): I64 acquires AttributeModifiers {
+    public fun get_mojo_modifier<Element, Affinity>(attribute: String): I64 acquires AttributeModifiers {
         assert!(enums::is_element_type<Element>() || enums::is_affinity_type<Affinity>(), error::invalid_argument(E_INVALID_TYPE));
         let element_modifier = get_modifier<Element>(attribute);
         let affinity_modifier = get_modifier<Affinity>(attribute);
         add_I64(element_modifier, affinity_modifier)
+    }
+
+    public fun get_starting_attribute<Element, Affinity>(attribute: String): u64 acquires AttributeModifiers {
+        let mojo_modifier = get_mojo_modifier<Element, Affinity>(attribute);
+        add_assert_positive(pos(BASE_ATTRIBUTE), mojo_modifier)
     }
 
     #[test_only] use mojo_monsters::element;
