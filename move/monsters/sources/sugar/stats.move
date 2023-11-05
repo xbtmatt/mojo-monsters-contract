@@ -8,7 +8,6 @@ module mojo_monsters::stats {
 
     const ELEMENT_NAMES: vector<vector<u8>> = vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ];
     const AFFINITY_NAMES: vector<vector<u8>> = vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ];
-    const BASE_ATTRIBUTE: u64 = 100;
     const MULTIPLIER_KEY: vector<u8> = b"MULTIPLIERS";
 
     /// You are not authorized to perform this action.
@@ -181,9 +180,9 @@ module mojo_monsters::stats {
         add_I64(element_modifier, affinity_modifier)
     }
 
-    public fun get_starting_attribute<Element, Affinity>(attribute: String): u64 acquires AttributeModifiers {
+    public fun get_starting_attribute<Element, Affinity>(base_attribute_value: u64, attribute: String): u64 acquires AttributeModifiers {
         let mojo_modifier = get_mojo_modifier<Element, Affinity>(attribute);
-        add_assert_positive(pos(BASE_ATTRIBUTE), mojo_modifier)
+        add_assert_positive(pos(base_attribute_value), mojo_modifier)
     }
 
     #[test_only] use mojo_monsters::element;

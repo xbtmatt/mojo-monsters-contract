@@ -44,27 +44,16 @@ module mojo_monsters::vitals {
         potential: u64,
     }
 
-    const BASE_RECHARGE_RATE: u64 = 1;
-    const INITIAL_ENERGY_MAX: u64 = 100;
-    const INITIAL_HUNGER_MAX: u64 = 100;
-    const INITIAL_HAPPINESS_MAX: u64 = 100;
-    const INITIAL_JOY_MAX: u64 = 100;
-    const INITIAL_IMMUNITY_MAX: u64 = 100;
-    const INITIAL_INTELLIGENCE_MAX: u64 = 100;
-    const MISC_DEFAULT_VITAL_VALUE: u64 = 1;
-
-    fun init_module() {
-
-    }
+    const BASE_ATTRIBUTE_VALUE: u64 = 100;
 
     public(friend) fun init_vitals<Element, Affinity>(
         monster: &signer,
     ) {
-        let max_energy = stats::get_starting_attribute<Element, Affinity>(string::utf8(b"MAX_ENERGY"));
-        let max_hunger = stats::get_starting_attribute<Element, Affinity>(string::utf8(b"MAX_HUNGER"));
-        let max_joy = stats::get_starting_attribute<Element, Affinity>(string::utf8(b"MAX_JOY"));
-        let max_immunity = stats::get_starting_attribute<Element, Affinity>(string::utf8(b"MAX_IMMUNITY"));
-        let max_intelligence = stats::get_starting_attribute<Element, Affinity>(string::utf8(b"MAX_INTELLIGENCE"));
+        let max_energy = stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"MAX_ENERGY"));
+        let max_hunger = stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"MAX_HUNGER"));
+        let max_joy = stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"MAX_JOY"));
+        let max_immunity = stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"MAX_IMMUNITY"));
+        let max_intelligence = stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"MAX_INTELLIGENCE"));
 
         move_to(
             monster,
@@ -72,31 +61,31 @@ module mojo_monsters::vitals {
                 energy: Energy {
                     current: max_energy,
                     max: max_energy,
-                    recharge_rate: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"ENERGY_RECHARGE_RATE")),
-                    efficiency: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"ENERGY_EFFICIENCY")),
+                    recharge_rate: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"ENERGY_RECHARGE_RATE")),
+                    efficiency: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"ENERGY_EFFICIENCY")),
                 },
                 hunger: Hunger {
                     current: max_hunger,
                     max: max_hunger,
-                    resistance: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"HUNGER_RESISTANCE")),
+                    resistance: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"HUNGER_RESISTANCE")),
                 },
                 joy: Joy {
                     current: max_joy,
                     max: max_joy,
-                    response: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"JOY_RESPONSE")),
-                    ability: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"JOY_ABILITY")),
+                    response: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"JOY_RESPONSE")),
+                    ability: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"JOY_ABILITY")),
                 },
                 immunity: Immunity {
                     current: max_immunity,
                     max: max_immunity,
-                    threshold: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"IMMUNITY_THRESHOLD")),
-                    persistence: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"IMMUNITY_PERSISTENCE")),
+                    threshold: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"IMMUNITY_THRESHOLD")),
+                    persistence: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"IMMUNITY_PERSISTENCE")),
                 },
                 intelligence: Intelligence {
                     current: max_intelligence,
                     max: max_intelligence,
-                    inherent: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"INHERENT_INTELLIGENCE")),
-                    potential: stats::get_starting_attribute<Element, Affinity>(string::utf8(b"INTELLIGENCE_POTENTIAL")),
+                    inherent: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"INHERENT_INTELLIGENCE")),
+                    potential: stats::get_starting_attribute<Element, Affinity>(BASE_ATTRIBUTE_VALUE, string::utf8(b"INTELLIGENCE_POTENTIAL")),
                 },
             },
         );
