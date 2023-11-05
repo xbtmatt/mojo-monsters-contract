@@ -64,6 +64,14 @@ module mojo_monsters::stats {
         I64 { neg: false, value: i.value }
     }
 
+    inline fun equals(a: I64, b: I64): bool {
+        if (a.value == 0 && b.value == 0) {
+            true
+        } else {
+            a.neg == b.neg && a.value == b.value
+        }
+    }
+
     inline fun spreadsheet(): vector<vector<I64>> {
         // Element,Energy Capacity,Energy Recharge Rate,Energy Efficiency,Hunger Capacity,Hunger Resistance,Happiness Capacity,Joy Response,joy ability,Immunity Threshold,Immunity Persistence,Inherent Intelligence,Learning Potential
         let spreadsheet_data = vector<vector<I64>> [
@@ -147,7 +155,7 @@ module mojo_monsters::stats {
         );
     }
 
-    fun get_element_modifier<ElementOrAttribute: key>(attribute: String): I64 acquires AttributeModifiers {
+    fun get_modifier<ElementOrAttribute>(attribute: String): I64 acquires AttributeModifiers {
         assert!(enums::is_element_type<ElementOrAttribute>() || enums::is_affinity_type<ElementOrAttribute>(), error::invalid_argument(E_INVALID_TYPE));
         let _indirect_assertion = enums::attribute(attribute);
         let attribute_modifiers = borrow_global<AttributeModifiers>(@mojo_monsters);
@@ -158,10 +166,11 @@ module mojo_monsters::stats {
     }
 
 
-    fun get_multiplier<T>(_multiplier_name: String): u64 {
-        // TODO
-        // use the stats from game_stats // create_game_stats
-        0
+    fun get_mojo_modifier<Element, Affinity>(attribute: String): I64 acquires AttributeModifiers {
+        assert!(enums::is_element_type<Element>() || enums::is_affinity_type<Affinity>(), error::invalid_argument(E_INVALID_TYPE));
+        let element_modifier = get_modifier<Element>(attribute);
+        let affinity_modifier = get_modifier<Affinity>(attribute);
+        add_I64(element_modifier, affinity_modifier)
     }
 
     #[test_only] use mojo_monsters::element;
@@ -193,14 +202,18 @@ module mojo_monsters::stats {
     }
 
     #[test (asdf=@mojo_monsters)]
-    fun test_element_modifiers(
+    fun test_modifiers(
         asdf: &signer,
     ) acquires AttributeModifiers {
         setup(asdf);
-        assert!(get_element_modifier<element::Fire>(string::utf8(b"MAX_ENERGY")) == pos(20), 0);
-        assert!(get_element_modifier<element::Air>(string::utf8(b"MAX_ENERGY")) == neg(10), 0);
-        assert!(get_element_modifier<affinity::Psyche>(string::utf8(b"IMMUNITY_THRESHOLD")) == neg(10), 0);
-        assert!(get_element_modifier<affinity::Adaptive>(string::utf8(b"IMMUNITY_THRESHOLD")) == pos(20), 0);
+        // singular modifiers
+        assert!(get_modifier<element::Fire>(string::utf8(b"MAX_ENERGY")) == pos(20), 0);
+        assert!(get_modifier<element::Air>(string::utf8(b"MAX_ENERGY")) == neg(10), 0);
+        assert!(get_modifier<affinity::Psyche>(string::utf8(b"IMMUNITY_THRESHOLD")) == neg(10), 0);
+        assert!(get_modifier<affinity::Adaptive>(string::utf8(b"IMMUNITY_THRESHOLD")) == pos(20), 0);
+        // mojo modifiers
+        assert!(equals(get_mojo_modifier<element::Fire, affinity::Solid>(string::utf8(b"MAX_ENERGY")), pos(40)), 0);
+        assert!(equals(get_mojo_modifier<element::Ether, affinity::Disruptive>(string::utf8(b"ENERGY_EFFICIENCY")), zero()), 0);
     }
 
     // #[test_only] use std::string::{Self};
@@ -220,6 +233,9 @@ module mojo_monsters::stats {
         assert!(add_I64(neg(20), neg(10)) == neg(30), 0);
         assert!(add_I64(neg(20), pos(10)) == neg(10), 0);
         assert!(add_I64(pos(20), neg(10)) == pos(10), 0);
+        assert!(equals(add_I64(neg(10), pos(20)), pos(10)), 0);
+        assert!(equals(pos(0), zero()), 0);
+        assert!(equals(neg(0), zero()), 0);
     }
 
 
