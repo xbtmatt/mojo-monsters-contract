@@ -1,7 +1,7 @@
 module mojo_monsters::enums {
     use std::string::{Self, String};
     use aptos_std::type_info::{type_of};
-    use mojo_monsters::elements::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
+    use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
     use mojo_monsters::affinity::{Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
     use std::error;
     use std::vector;
@@ -9,17 +9,20 @@ module mojo_monsters::enums {
     /// You have provided an invalid type.
     const E_INVALID_TYPE: u64 = 0;
 
-    const ELEMENT_NAMES: vector<vector<u8>> = vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ];
-    const AFFINITY_NAMES: vector<vector<u8>> = vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ];
-
     public inline fun get_element_names(): vector<String> {
         // vector::map_ref(&ELEMENT_NAMES, |x| { string::utf8(*x) })
-        vector::map_ref(&vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ], |x| { string::utf8(*x) })
+        // we use the below because inline can't use enums
+        vector::map(vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ], |x| { string::utf8(x) })
     }
-    
+
     public inline fun get_affinity_names(): vector<String> {
         // vector::map_ref(&AFFINITY_NAMES, |x| { string::utf8(*x) })
-        vector::map_ref(&vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ], |x| { string::utf8(*x) })
+        // we use the below because inline can't use enums
+        vector::map(vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ], |x| { string::utf8(x) })
+    }
+
+    public inline fun get_attribute_names(): vector<String> {
+        vector::map(vector<vector<u8>> [ b"MAX_ENERGY", b"ENERGY_RECHARGE_RATE", b"ENERGY_EFFICIENCY", b"MAX_HUNGER", b"HUNGER_RESISTANCE", b"MAX_JOY", b"JOY_RESPONSE", b"JOY_ABILITY", b"MAX_IMMUNITY", b"IMMUNITY_THRESHOLD", b"IMMUNITY_PERSISTENCE", b"MAX_INTELLIGENCE", b"INHERENT_INTELLIGENCE", b"INTELLIGENCE_POTENTIAL" ], |x| { string::utf8(x) })
     }
 
     public inline fun fire(): String { string::utf8(b"FIRE") }
@@ -36,6 +39,34 @@ module mojo_monsters::enums {
     public inline fun psyche(): String { string::utf8(b"PSYCHE") }
     public inline fun adaptive(): String { string::utf8(b"ADAPTIVE") }
     public inline fun disruptive(): String { string::utf8(b"DISRUPTIVE") }
+
+    public inline fun is_element_type<T>(): bool {
+        // elements
+        (type_of<T>() == type_of<Fire>())        ||
+        (type_of<T>() == type_of<Earth>())       ||
+        (type_of<T>() == type_of<Water>())       ||
+        (type_of<T>() == type_of<Air>())         ||
+        (type_of<T>() == type_of<Crystal>())     ||
+        (type_of<T>() == type_of<Electricity>()) ||
+        (type_of<T>() == type_of<Ether>())
+    }
+
+    public inline fun is_affinity_type<T>(): bool {
+        // affinities
+        (type_of<T>() == type_of<Solid>())       ||
+        (type_of<T>() == type_of<Swift>())       ||
+        (type_of<T>() == type_of<Harmonic>())    ||
+        (type_of<T>() == type_of<Psyche>())      ||
+        (type_of<T>() == type_of<Adaptive>())    ||
+        (type_of<T>() == type_of<Disruptive>())
+    }
+
+    public inline fun name<T>(): String {
+        // elements
+        if (is_element_type<T>()) { element_name<T>() }
+        else if ( is_affinity_type<T>() ) { affinity_name<T>() }
+        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+    }
     
     public inline fun element_name<T>(): String {
         // elements
@@ -106,22 +137,20 @@ module mojo_monsters::enums {
 
     // public inline fun attribute(s: String): u8 {
     public fun attribute(s: String): u8 {
-             if (s == string::utf8(b"MAX_ENERGY"))              { 0 }
-        else if (s == string::utf8(b"ENERGY_RECHARGE_RATE"))    { 1 }
+             if (s == string::utf8(b"MAX_ENERGY"))                     { 0 }
+        else if (s == string::utf8(b"ENERGY_RECHARGE_RATE"))           { 1 }
         else if (s == string::utf8(b"ENERGY_EFFICIENCY"))       { 2 }
         else if (s == string::utf8(b"MAX_HUNGER"))              { 3 }
         else if (s == string::utf8(b"HUNGER_RESISTANCE"))       { 4 }
-        else if (s == string::utf8(b"MAX_THIRST"))              { 5 }
-        else if (s == string::utf8(b"THIRST_RESISTANCE"))       { 6 }
-        else if (s == string::utf8(b"MAX_HAPPINESS"))           { 7 }
-        else if (s == string::utf8(b"MAX_JOY"))                 { 8 }
-        else if (s == string::utf8(b"JOY_RESPONSE"))            { 9 }
-        else if (s == string::utf8(b"JOY_ABILITY"))             { 10 }
-        else if (s == string::utf8(b"MAX_IMMUNITY"))            { 11 }
-        else if (s == string::utf8(b"IMMUNITY_THRESHOLD"))      { 12 }
-        else if (s == string::utf8(b"IMMUNITY_PERSISTENCE"))    { 13 }
-        else if (s == string::utf8(b"MAX_INTELLIGENCE"))        { 14 }
-        else if (s == string::utf8(b"INTELLIGENCE_POTENTIAL"))  { 15 }
+        else if (s == string::utf8(b"MAX_JOY"))                 { 5 }
+        else if (s == string::utf8(b"JOY_RESPONSE"))            { 6 }
+        else if (s == string::utf8(b"JOY_ABILITY"))             { 7 }
+        else if (s == string::utf8(b"MAX_IMMUNITY"))            { 8 }
+        else if (s == string::utf8(b"IMMUNITY_THRESHOLD"))      { 9 }
+        else if (s == string::utf8(b"IMMUNITY_PERSISTENCE"))    { 10 }
+        else if (s == string::utf8(b"MAX_INTELLIGENCE"))        { 11 }
+        else if (s == string::utf8(b"INHERENT_INTELLIGENCE"))   { 12 }
+        else if (s == string::utf8(b"INTELLIGENCE_POTENTIAL"))  { 13 }
         else { abort error::invalid_argument(0) } // E_INVALID_TYPE
     }
 }
@@ -130,9 +159,9 @@ module mojo_monsters::enums_tests {
     #[test_only] use std::vector;
 
     #[test_only] use std::string::{Self};
-    #[test_only] use mojo_monsters::elements::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
+    #[test_only] use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
     #[test_only] use mojo_monsters::affinity::{Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
-    #[test_only] use mojo_monsters::enums::{element_name, affinity_name, element_name_index, element, affinity, affinity_name_index, get_element_names, get_affinity_names};
+    #[test_only] use mojo_monsters::enums::{element_name, affinity_name, element_name_index, element, affinity, affinity_name_index, get_element_names, get_affinity_names, get_attribute_names};
     #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
 
     // Elements
@@ -161,9 +190,6 @@ module mojo_monsters::enums_tests {
     #[test_only] const ENERGY_EFFICIENCY: vector<u8> = b"ENERGY_EFFICIENCY";
     #[test_only] const MAX_HUNGER: vector<u8> = b"MAX_HUNGER";
     #[test_only] const HUNGER_RESISTANCE: vector<u8> = b"HUNGER_RESISTANCE";
-    #[test_only] const MAX_THIRST: vector<u8> = b"MAX_THIRST";
-    #[test_only] const THIRST_RESISTANCE: vector<u8> = b"THIRST_RESISTANCE";
-    #[test_only] const MAX_HAPPINESS: vector<u8> = b"MAX_HAPPINESS";
     #[test_only] const MAX_JOY: vector<u8> = b"MAX_JOY";
     #[test_only] const JOY_RESPONSE: vector<u8> = b"JOY_RESPONSE";
     #[test_only] const JOY_ABILITY: vector<u8> = b"JOY_ABILITY";
@@ -171,6 +197,7 @@ module mojo_monsters::enums_tests {
     #[test_only] const IMMUNITY_THRESHOLD: vector<u8> = b"IMMUNITY_THRESHOLD";
     #[test_only] const IMMUNITY_PERSISTENCE: vector<u8> = b"IMMUNITY_PERSISTENCE";
     #[test_only] const MAX_INTELLIGENCE: vector<u8> = b"MAX_INTELLIGENCE";
+    #[test_only] const INHERENT_INTELLIGENCE: vector<u8> = b"INHERENT_INTELLIGENCE";
     #[test_only] const INTELLIGENCE_POTENTIAL: vector<u8> = b"INTELLIGENCE_POTENTIAL";
 
     #[test]
@@ -214,6 +241,10 @@ module mojo_monsters::enums_tests {
             };
         });
 
+        vector::enumerate_ref(&get_attribute_names(), |i, e| {
+            assert!(attribute(*e) == (i as u8), 0);
+        });
+
         assert!(fire() == string::utf8(FIRE), 0);
         assert!(earth() == string::utf8(EARTH), 1);
         assert!(water() == string::utf8(WATER), 2);
@@ -233,16 +264,14 @@ module mojo_monsters::enums_tests {
         assert!(attribute(string::utf8(ENERGY_EFFICIENCY)) == 2, 2);
         assert!(attribute(string::utf8(MAX_HUNGER)) == 3, 3);
         assert!(attribute(string::utf8(HUNGER_RESISTANCE)) == 4, 4);
-        assert!(attribute(string::utf8(MAX_THIRST)) == 5, 5);
-        assert!(attribute(string::utf8(THIRST_RESISTANCE)) == 6, 6);
-        assert!(attribute(string::utf8(MAX_HAPPINESS)) == 7, 7);
-        assert!(attribute(string::utf8(MAX_JOY)) == 8, 8);
-        assert!(attribute(string::utf8(JOY_RESPONSE)) == 9, 9);
-        assert!(attribute(string::utf8(JOY_ABILITY)) == 10, 10);
-        assert!(attribute(string::utf8(MAX_IMMUNITY)) == 11, 11);
-        assert!(attribute(string::utf8(IMMUNITY_THRESHOLD)) == 12, 12);
-        assert!(attribute(string::utf8(IMMUNITY_PERSISTENCE)) == 13, 13);
-        assert!(attribute(string::utf8(MAX_INTELLIGENCE)) == 14, 14);
-        assert!(attribute(string::utf8(INTELLIGENCE_POTENTIAL)) == 15, 15);
+        assert!(attribute(string::utf8(MAX_JOY)) == 5, 5);
+        assert!(attribute(string::utf8(JOY_RESPONSE)) == 6, 6);
+        assert!(attribute(string::utf8(JOY_ABILITY)) == 7, 7);
+        assert!(attribute(string::utf8(MAX_IMMUNITY)) == 8, 8);
+        assert!(attribute(string::utf8(IMMUNITY_THRESHOLD)) == 9, 9);
+        assert!(attribute(string::utf8(IMMUNITY_PERSISTENCE)) == 10, 10);
+        assert!(attribute(string::utf8(MAX_INTELLIGENCE)) == 11, 11);
+        assert!(attribute(string::utf8(INHERENT_INTELLIGENCE)) == 12, 12);
+        assert!(attribute(string::utf8(INTELLIGENCE_POTENTIAL)) == 13, 13);
     }
 }

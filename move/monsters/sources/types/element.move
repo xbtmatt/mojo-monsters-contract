@@ -1,4 +1,4 @@
-module mojo_monsters::elements {
+module mojo_monsters::element {
     struct Fire has key { }
     struct Earth has key { }
     struct Water has key { }

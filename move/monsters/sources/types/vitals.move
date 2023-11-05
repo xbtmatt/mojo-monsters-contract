@@ -3,7 +3,6 @@ module mojo_monsters::vitals {
     struct Vitals has key {
         energy: Energy,
         hunger: Hunger,
-        thirst: Thirst,
         happiness: Happiness,
         joy: Joy,
         immunity: Immunity,
@@ -18,12 +17,6 @@ module mojo_monsters::vitals {
     }
 
     struct Hunger has copy, drop, store {
-        current: u64,
-        max: u64,
-        resistance: u64,
-    }
-
-    struct Thirst has copy, drop, store {
         current: u64,
         max: u64,
         resistance: u64,
@@ -53,7 +46,6 @@ module mojo_monsters::vitals {
     const BASE_RECHARGE_RATE: u64 = 1;
     const INITIAL_ENERGY_MAX: u64 = 100;
     const INITIAL_HUNGER_MAX: u64 = 100;
-    const INITIAL_THIRST_MAX: u64 = 100;
     const INITIAL_HAPPINESS_MAX: u64 = 100;
     const INITIAL_JOY_MAX: u64 = 100;
     const INITIAL_IMMUNITY_MAX: u64 = 100;
@@ -69,14 +61,11 @@ module mojo_monsters::vitals {
         _element: u8,
         _affinity: u8,
     ) {
-
         // let max_energy = calculate_max_energy(element, affinity);
         // let energy_recharge_rate = calculate_energy_recharge_rate(element, affinity);
         // let energy_efficiency = calculate_energy_efficiency(element, affinity);
         // let max_hunger = calculate_max_hunger(element, affinity);
         // let hunger_resistance = calculate_hunger_resistance(element, affinity);
-        // let max_thirst = calculate_max_thirst(element, affinity);
-        // let thirst_resistance = calculate_thirst_resistance(element, affinity);
         // let max_happiness = calculate_max_happiness(element, affinity);
         // let max_joy = calculate_max_joy(element, affinity);
         // let joy_response = calculate_joy_response(element, affinity);
@@ -100,11 +89,6 @@ module mojo_monsters::vitals {
         //             current: max_hunger,
         //             max: max_hunger,
         //             resistance: hunger_resistance,
-        //         },
-        //         thirst: Thirst {
-        //             current: max_thirst,
-        //             max: max_thirst,
-        //             resistance: thirst_resistance,
         //         },
         //         happiness: Happiness {
         //             current: max_happiness,
