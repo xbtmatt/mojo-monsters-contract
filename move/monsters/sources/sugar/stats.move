@@ -6,6 +6,8 @@ module mojo_monsters::stats {
     use std::string::{String};
     use mojo_monsters::enums;
 
+    #[test_only] friend mojo_monsters::test_setup;
+
     const ELEMENT_NAMES: vector<vector<u8>> = vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ];
     const AFFINITY_NAMES: vector<vector<u8>> = vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ];
     const MULTIPLIER_KEY: vector<u8> = b"MULTIPLIERS";
@@ -190,10 +192,8 @@ module mojo_monsters::stats {
     #[test_only] use std::string;
 
     #[test_only]
-    fun setup(
-        asdf: &signer
-    ) {
-        init_module(asdf);
+    public(friend) fun init_module_for_test(deployer: &signer) {
+        init_module(deployer);
     }
 
     #[test]
@@ -213,11 +213,11 @@ module mojo_monsters::stats {
         ], 0);
     }
 
-    #[test (asdf=@mojo_monsters)]
+    #[test(deployer=@mojo_monsters)]
     fun test_modifiers(
-        asdf: &signer,
+        deployer: &signer,
     ) acquires AttributeModifiers {
-        setup(asdf);
+        init_module_for_test(deployer);
         // singular modifiers
         assert!(get_modifier<element::Fire>(string::utf8(b"MAX_ENERGY")) == pos(20), 0);
         assert!(get_modifier<element::Air>(string::utf8(b"MAX_ENERGY")) == neg(10), 0);

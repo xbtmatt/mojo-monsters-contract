@@ -6,6 +6,8 @@ module mojo_monsters::enums {
     use std::error;
     use std::vector;
 
+    
+
     /// You have provided an invalid type.
     const E_INVALID_TYPE: u64 = 0;
 

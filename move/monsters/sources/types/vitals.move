@@ -91,5 +91,24 @@ module mojo_monsters::vitals {
         );
     }
 
+    #[test_only] use std::signer;
+    #[test_only] use mojo_monsters::element;
+    #[test_only] use mojo_monsters::affinity;
+    #[test_only] use mojo_monsters::vitals;
+    #[test_only] use mojo_monsters::enums;
+
+    #[test(deployer = @mojo_monsters)]
+    fun test_happy_path(
+        deployer: &signer
+    ) acquires Vitals {
+        mojo_monsters::test_setup::init(deployer);
+        let deployer_addr = signer::address_of(deployer);
+        init_vitals<element::Fire, affinity::Harmonic>(deployer);
+        std::debug::print(&enums::name<element::Fire>());
+        std::debug::print(&enums::name<affinity::Harmonic>());
+        std::debug::print(borrow_global<vitals::Vitals>(deployer_addr));
+    }
+
+
 
 }
