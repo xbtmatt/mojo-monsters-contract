@@ -1,4 +1,4 @@
-module mojo_monsters::mint {
+module mojo_monsters::start {
     // use std::string;
     // use std::error;
     // use std::signer;
