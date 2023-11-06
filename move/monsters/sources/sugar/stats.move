@@ -23,8 +23,10 @@ module mojo_monsters::stats {
     }
 
     inline fun spreadsheet(): vector<vector<I64>> {
+        // TODO: Fix this. it's really fragile because it depends on hard-coded vector orders, there's a better way to do this...
         // Element,Energy Capacity,Energy Recharge Rate,Energy Efficiency,Hunger Capacity,Hunger Resistance,Happiness Capacity,Joy Response,joy ability,Immunity Threshold,Immunity Persistence,Inherent Intelligence,Learning Potential
         let spreadsheet_data = vector<vector<I64>> [
+            vector<I64> [ zero(), zero(), zero(), zero(),  zero(),  zero(),  zero(),  zero(),  zero(), zero(),  zero(), zero(), zero(),  zero()  ],  // None
             vector<I64> [ pos(20), pos(20), neg(10), zero(),  neg(10), zero(),  zero(),  zero(),  zero(), zero(),  zero(),  zero(), zero(),  zero()  ],  // Fire
             vector<I64> [ zero(),  zero(),  pos(10), zero(),  zero(),  zero(),  zero(),  zero(),  zero(), zero(),  pos(10), zero(), zero(),  neg(10) ],  // Earth
             vector<I64> [ zero(),  pos(10), zero(),  neg(10), pos(10), zero(),  zero(),  zero(),  zero(), zero(),  zero(),  zero(), zero(),  zero()  ],  // Water

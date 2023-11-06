@@ -6,4 +6,5 @@ module mojo_monsters::element {
     struct Crystal has key { }
     struct Electricity has key { }
     struct Ether has key { }
+    struct None has key { }
 }

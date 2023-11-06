@@ -8,6 +8,7 @@ module mojo_monsters::object_refs {
     friend mojo_monsters::player;
     friend mojo_monsters::sack;
     friend mojo_monsters::cauldron;
+    friend mojo_monsters::biomass;
     friend mojo_monsters::monster;
     friend mojo_monsters::start;
 

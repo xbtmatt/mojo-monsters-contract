@@ -1,14 +1,14 @@
 module mojo_monsters::enums {
     use std::string::{Self, String};
     use aptos_std::type_info::{type_of};
-    use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
+    use mojo_monsters::element::{None, Fire, Earth, Water, Air, Crystal, Electricity, Ether};
     use mojo_monsters::affinity::{Balanced, Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
     use mojo_monsters::type_discriminators;
     use mojo_monsters::mojo_errors;
     use std::vector;
 
     public inline fun get_element_names(): vector<String> {
-        vector<String> [ fire(), earth(), water(), air(), crystal(), electricity(), ether() ]
+        vector<String> [ none(), fire(), earth(), water(), air(), crystal(), electricity(), ether() ]
     }
 
     public inline fun get_affinity_names(): vector<String> {
@@ -19,6 +19,7 @@ module mojo_monsters::enums {
         vector::map(vector<vector<u8>> [ b"MAX_ENERGY", b"ENERGY_RECHARGE_RATE", b"ENERGY_EFFICIENCY", b"MAX_HUNGER", b"HUNGER_RESISTANCE", b"MAX_JOY", b"JOY_RESPONSE", b"JOY_ABILITY", b"MAX_IMMUNITY", b"IMMUNITY_THRESHOLD", b"IMMUNITY_PERSISTENCE", b"MAX_INTELLIGENCE", b"INHERENT_INTELLIGENCE", b"INTELLIGENCE_POTENTIAL" ], |x| { string::utf8(x) })
     }
 
+    public fun none(): String { string::utf8(b"NONE") }
     public fun fire(): String { string::utf8(b"FIRE") }
     public fun earth(): String { string::utf8(b"EARTH") }
     public fun water(): String { string::utf8(b"WATER") }
@@ -35,16 +36,17 @@ module mojo_monsters::enums {
     public fun adaptive(): String { string::utf8(b"ADAPTIVE") }
     public fun disruptive(): String { string::utf8(b"DISRUPTIVE") }
 
-    public inline fun name<T>(): String {
+    public fun name<T>(): String {
         // elements
         if (type_discriminators::is_an_element<T>()) { element_name<T>() }
         else if ( type_discriminators::is_an_affinity<T>() ) { affinity_name<T>() }
         else { abort mojo_errors::invalid_type() }
     }
     
-    public inline fun element_name<T>(): String {
+    public fun element_name<T>(): String {
         // elements
-             if (type_of<T>() == type_of<Fire>())        { fire() }
+             if (type_of<T>() == type_of<None>())        { none() }
+        else if (type_of<T>() == type_of<Fire>())        { fire() }
         else if (type_of<T>() == type_of<Earth>())       { earth() }
         else if (type_of<T>() == type_of<Water>())       { water() }
         else if (type_of<T>() == type_of<Air>())         { air() }
@@ -54,7 +56,7 @@ module mojo_monsters::enums {
         else { abort mojo_errors::invalid_type() }
     }
 
-    public inline fun affinity_name<T>(): String {
+    public fun affinity_name<T>(): String {
              if (type_of<T>() == type_of<Balanced>())    { balanced() }
         else if (type_of<T>() == type_of<Solid>())       { solid() }
         else if (type_of<T>() == type_of<Swift>())       { swift() }
@@ -67,13 +69,14 @@ module mojo_monsters::enums {
 
     // public inline fun element<T>(): u8 {
     public fun element<T>(): u8 {
-             if (type_of<T>() == type_of<Fire>())        { 0 }
-        else if (type_of<T>() == type_of<Earth>())       { 1 }
-        else if (type_of<T>() == type_of<Water>())       { 2 }
-        else if (type_of<T>() == type_of<Air>())         { 3 }
-        else if (type_of<T>() == type_of<Crystal>())     { 4 }
-        else if (type_of<T>() == type_of<Electricity>()) { 5 }
-        else if (type_of<T>() == type_of<Ether>())       { 6 }
+             if (type_of<T>() == type_of<None>())        { 0 }
+        else if (type_of<T>() == type_of<Fire>())        { 1 }
+        else if (type_of<T>() == type_of<Earth>())       { 2 }
+        else if (type_of<T>() == type_of<Water>())       { 3 }
+        else if (type_of<T>() == type_of<Air>())         { 4 }
+        else if (type_of<T>() == type_of<Crystal>())     { 5 }
+        else if (type_of<T>() == type_of<Electricity>()) { 6 }
+        else if (type_of<T>() == type_of<Ether>())       { 7 }
         else { abort mojo_errors::invalid_type() }
     }
     
@@ -91,17 +94,18 @@ module mojo_monsters::enums {
 
     // public inline fun element_name_index(s: String): u8 {
     public fun element_name_index(s: String): u8 {
-             if (s == fire())        { 0 }
-        else if (s == earth())       { 1 }
-        else if (s == water())       { 2 }
-        else if (s == air())         { 3 }
-        else if (s == crystal())     { 4 }
-        else if (s == electricity()) { 5 }
-        else if (s == ether())       { 6 }
+             if (s == none())        { 0 }
+        else if (s == fire())        { 1 }
+        else if (s == earth())       { 2 }
+        else if (s == water())       { 3 }
+        else if (s == air())         { 4 }
+        else if (s == crystal())     { 5 }
+        else if (s == electricity()) { 6 }
+        else if (s == ether())       { 7 }
         else { abort mojo_errors::invalid_type() }
     }
 
-    public inline fun affinity_name_index(s: String): u8 {
+    public fun affinity_name_index(s: String): u8 {
              if (s == balanced())    { 0 }
         else if (s == solid())       { 1 }
         else if (s == swift())       { 2 }
@@ -114,8 +118,8 @@ module mojo_monsters::enums {
 
     // public inline fun attribute(s: String): u8 {
     public fun attribute(s: String): u8 {
-             if (s == string::utf8(b"MAX_ENERGY"))                     { 0 }
-        else if (s == string::utf8(b"ENERGY_RECHARGE_RATE"))           { 1 }
+             if (s == string::utf8(b"MAX_ENERGY"))              { 0 }
+        else if (s == string::utf8(b"ENERGY_RECHARGE_RATE"))    { 1 }
         else if (s == string::utf8(b"ENERGY_EFFICIENCY"))       { 2 }
         else if (s == string::utf8(b"MAX_HUNGER"))              { 3 }
         else if (s == string::utf8(b"HUNGER_RESISTANCE"))       { 4 }
@@ -136,13 +140,14 @@ module mojo_monsters::enums_tests {
     #[test_only] use std::vector;
 
     #[test_only] use std::string::{Self};
-    #[test_only] use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
+    #[test_only] use mojo_monsters::element::{None, Fire, Earth, Water, Air, Crystal, Electricity, Ether};
     #[test_only] use mojo_monsters::affinity::{Balanced, Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
     #[test_only] use mojo_monsters::enums::{element_name, affinity_name, element_name_index, element, affinity, affinity_name_index, get_element_names, get_affinity_names, get_attribute_names};
-    #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, balanced, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
+    #[test_only] use mojo_monsters::enums::{none, fire, earth, water, air, crystal, electricity, ether, balanced, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
 
     // Elements
     // ---------------------------------------------------------------
+    #[test_only] const NONE: vector<u8> = b"NONE";
     #[test_only] const FIRE: vector<u8> = b"FIRE";
     #[test_only] const EARTH: vector<u8> = b"EARTH";
     #[test_only] const WATER: vector<u8> = b"WATER";
@@ -180,6 +185,7 @@ module mojo_monsters::enums_tests {
 
     #[test]
     fun test_enum_indices() {
+        assert!(element_name<None>() == none(), 0);
         assert!(element_name<Fire>() == fire(), 0);
         assert!(element_name<Earth>() == earth(), 0);
         assert!(element_name<Water>() == water(), 0);
@@ -196,6 +202,7 @@ module mojo_monsters::enums_tests {
         assert!(affinity_name<Adaptive>() == adaptive(), 0);
         assert!(affinity_name<Disruptive>() == disruptive(), 0);
 
+        assert!(element_name_index(element_name<None>()) == element<None>(), 0);
         assert!(element_name_index(element_name<Fire>()) == element<Fire>(), 0);
         assert!(element_name_index(element_name<Earth>()) == element<Earth>(), 0);
         assert!(element_name_index(element_name<Water>()) == element<Water>(), 0);
@@ -225,21 +232,22 @@ module mojo_monsters::enums_tests {
             assert!(attribute(*e) == (i as u8), 0);
         });
 
-        assert!(fire() == string::utf8(FIRE), 0);
-        assert!(earth() == string::utf8(EARTH), 1);
-        assert!(water() == string::utf8(WATER), 2);
-        assert!(air() == string::utf8(AIR), 3);
-        assert!(crystal() == string::utf8(CRYSTAL), 4);
-        assert!(electricity() == string::utf8(ELECTRICITY), 5);
-        assert!(ether() == string::utf8(ETHER), 6);
+        assert!(none() == string::utf8(NONE), 0);
+        assert!(fire() == string::utf8(FIRE), 1);
+        assert!(earth() == string::utf8(EARTH), 2);
+        assert!(water() == string::utf8(WATER), 3);
+        assert!(air() == string::utf8(AIR), 4);
+        assert!(crystal() == string::utf8(CRYSTAL), 5);
+        assert!(electricity() == string::utf8(ELECTRICITY), 6);
+        assert!(ether() == string::utf8(ETHER), 7);
 
-        assert!(balanced() == string::utf8(BALANCED), 7);
-        assert!(solid() == string::utf8(SOLID), 8);
-        assert!(swift() == string::utf8(SWIFT), 9);
-        assert!(harmonic() == string::utf8(HARMONIC), 10);
-        assert!(psyche() == string::utf8(PSYCHE), 11);
-        assert!(adaptive() == string::utf8(ADAPTIVE), 12);
-        assert!(disruptive() == string::utf8(DISRUPTIVE), 13);
+        assert!(balanced() == string::utf8(BALANCED), 8);
+        assert!(solid() == string::utf8(SOLID), 9);
+        assert!(swift() == string::utf8(SWIFT), 10);
+        assert!(harmonic() == string::utf8(HARMONIC), 11);
+        assert!(psyche() == string::utf8(PSYCHE), 12);
+        assert!(adaptive() == string::utf8(ADAPTIVE), 13);
+        assert!(disruptive() == string::utf8(DISRUPTIVE), 14);
 
         assert!(attribute(string::utf8(MAX_ENERGY)) == 0, 0);
         assert!(attribute(string::utf8(ENERGY_RECHARGE_RATE)) == 1, 1);
