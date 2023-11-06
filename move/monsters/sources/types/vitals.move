@@ -104,11 +104,12 @@ module mojo_monsters::vitals {
         mojo_monsters::test_setup::init(deployer);
         let deployer_addr = signer::address_of(deployer);
         init_vitals<element::Fire, affinity::Harmonic>(deployer);
-        std::debug::print(&enums::name<element::Fire>());
-        std::debug::print(&enums::name<affinity::Harmonic>());
-        std::debug::print(borrow_global<vitals::Vitals>(deployer_addr));
+        let element_name = enums::name<element::Fire>();
+        let affinity_name = enums::name<affinity::Harmonic>();
+        let vitals = borrow_global<vitals::Vitals>(deployer_addr);
+        // std::debug::print(&element_name);
+        // std::debug::print(&affinity_name);
+        // std::debug::print(vitals);
+        let (_, _, _,) = (element_name, affinity_name, vitals);
     }
-
-
-
 }

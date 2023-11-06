@@ -4,7 +4,6 @@ module mojo_monsters::object_refs {
     use std::option::{Self, Option};
     use std::type_info::{type_of};
     use std::error;
-    use std::string::String;
 
     friend mojo_monsters::player;
     friend mojo_monsters::sack;
