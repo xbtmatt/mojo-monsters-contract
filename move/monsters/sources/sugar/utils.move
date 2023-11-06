@@ -1,9 +1,16 @@
 module mojo_monsters::utils {
     use std::vector;
     use std::error;
+    use std::string::{Self, String};
 
     /// Vector lengths do not match.
     const E_VECTOR_LENGTHS_DO_NOT_MATCH: u64 = 0;
+
+    const DECIMALS: u8 = 0;
+    const PROJECT_URI: vector<u8> = b"";
+
+    public fun get_decimals(): u8 { DECIMALS }
+    public fun get_project_uri(): String { string::utf8(PROJECT_URI) }
 
     public inline fun transpose<T: copy + drop + store>(v: vector<vector<T>>): vector<vector<T>> {
         let first_el = vector::borrow(&v, 0);
