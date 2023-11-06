@@ -11,7 +11,7 @@ module mojo_monsters::object_refs {
     friend mojo_monsters::cauldron;
     friend mojo_monsters::biomass;
     friend mojo_monsters::monster;
-    friend mojo_monsters::start;
+    friend mojo_monsters::initialize;
 
     /// That object doesn't have valid Refs (capabilities) on it.
     const EOBJECT_HAS_NO_REFS: u64 = 0;

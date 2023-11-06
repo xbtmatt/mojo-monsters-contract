@@ -4,8 +4,15 @@ module mojo_monsters::cauldron {
     use mojo_monsters::type_discriminators;
     use aptos_framework::object::{Self, Object};
     use aptos_token_objects::token::{Token};
+    use mojo_monsters::access_control;
+    friend mojo_monsters::initialize;
 
     struct Cauldron<phantom Element> has key { }
+
+    public(friend) fun init(director: &signer) {
+        access_control::assert_is_director(director);
+        //    
+    }
 
     public(friend) fun create<Element>(
         for: &signer,

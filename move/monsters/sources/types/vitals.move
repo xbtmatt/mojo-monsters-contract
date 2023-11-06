@@ -102,7 +102,7 @@ module mojo_monsters::vitals {
         deployer: &signer,
         aptos_framework: &signer,
     ) acquires Vitals {
-        mojo_monsters::test_setup::init(deployer, aptos_framework);
+        mojo_monsters::test_utils::setup_test(deployer, aptos_framework);
         let deployer_addr = signer::address_of(deployer);
         init_vitals<element::Fire, affinity::Harmonic>(deployer);
         let element_name = enums::name<element::Fire>();

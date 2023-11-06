@@ -10,8 +10,8 @@ module mojo_monsters::stats {
     use mojo_monsters::mojo_errors;
     use mojo_monsters::type_discriminators;
 
-    #[test_only] friend mojo_monsters::test_setup;
-
+    friend mojo_monsters::initialize;
+    #[test_only] friend mojo_monsters::stats_test;
 
     /// Vector lengths do not match.
     const E_VECTOR_LENGTHS_DO_NOT_MATCH: u64 = 1;
@@ -20,6 +20,34 @@ module mojo_monsters::stats {
 
     struct AttributeModifiers has key {
         inner: SimpleMap<String, SimpleMap<String, I64>>,
+    }
+
+    public(friend) fun init(deployer: &signer) {
+        assert!(signer::address_of(deployer) == @mojo_monsters, mojo_errors::not_authorized());
+
+        let inner_keys = vector<String> [];
+        vector::append(&mut inner_keys, enums::get_element_names());
+        vector::append(&mut inner_keys, enums::get_affinity_names());
+
+        let spreadsheet_data = spreadsheet();
+        // index 1 == Fire: Energy Capacity, Energy Recharge Rate, ..., Learning Potential
+        // index 2 == Earth: Energy Capacity, Energy Recharge Rate, ..., Learning Potential
+        // etc...
+        let modifier_map = simple_map::new<String, SimpleMap<String, I64>>();
+        vector::enumerate_ref(&enums::get_attribute_names(), |i, attribute| {
+            let inner_map = simple_map::new<String, I64>();
+            vector::enumerate_ref(&inner_keys, |ii, inner_key| {
+                let column = vector::borrow(&spreadsheet_data, i);
+                simple_map::add(&mut inner_map, *inner_key, *vector::borrow(column, ii));
+            });
+            simple_map::add(&mut modifier_map, *attribute, inner_map);
+        });
+        move_to(
+            deployer,
+            AttributeModifiers {
+                inner: modifier_map,
+            }
+        );
     }
 
     inline fun spreadsheet(): vector<vector<I64>> {
@@ -57,36 +85,7 @@ module mojo_monsters::stats {
         transpose(spreadsheet_data)
     }
 
-
-    fun init_module(deployer: &signer) {
-        assert!(signer::address_of(deployer) == @mojo_monsters, mojo_errors::not_authorized());
-
-        let inner_keys = vector<String> [];
-        vector::append(&mut inner_keys, enums::get_element_names());
-        vector::append(&mut inner_keys, enums::get_affinity_names());
-
-        let spreadsheet_data = spreadsheet();
-        // index 1 == Fire: Energy Capacity, Energy Recharge Rate, ..., Learning Potential
-        // index 2 == Earth: Energy Capacity, Energy Recharge Rate, ..., Learning Potential
-        // etc...
-        let modifier_map = simple_map::new<String, SimpleMap<String, I64>>();
-        vector::enumerate_ref(&enums::get_attribute_names(), |i, attribute| {
-            let inner_map = simple_map::new<String, I64>();
-            vector::enumerate_ref(&inner_keys, |ii, inner_key| {
-                let column = vector::borrow(&spreadsheet_data, i);
-                simple_map::add(&mut inner_map, *inner_key, *vector::borrow(column, ii));
-            });
-            simple_map::add(&mut modifier_map, *attribute, inner_map);
-        });
-        move_to(
-            deployer,
-            AttributeModifiers {
-                inner: modifier_map,
-            }
-        );
-    }
-
-    fun get_modifier<ElementOrAttribute>(attribute: String): I64 acquires AttributeModifiers {
+    public(friend) fun get_modifier<ElementOrAttribute>(attribute: String): I64 acquires AttributeModifiers {
         assert!(type_discriminators::is_an_element<ElementOrAttribute>() || type_discriminators::is_an_affinity<ElementOrAttribute>(), mojo_errors::invalid_type());
         let _indirect_assertion = enums::attribute(attribute);
         let attribute_modifiers = borrow_global<AttributeModifiers>(@mojo_monsters);
@@ -95,7 +94,6 @@ module mojo_monsters::stats {
         let modifiers = simple_map::borrow(attribute_maps, &enums::name<ElementOrAttribute>());
         *modifiers
     }
-
 
     public fun get_mojo_modifier<Element, Affinity>(attribute: String): I64 acquires AttributeModifiers {
         let element_modifier = get_modifier<Element>(attribute);
@@ -107,30 +105,30 @@ module mojo_monsters::stats {
         let mojo_modifier = get_mojo_modifier<Element, Affinity>(attribute);
         add_assert_positive(pos(base_attribute_value), mojo_modifier)
     }
+}
 
-    #[test_only] use mojo_monsters::element;
-    #[test_only] use mojo_monsters::affinity;
-    #[test_only] use std::string;
-    #[test_only] use mojo_monsters::i64::{equals};
+#[test_only]
+module mojo_monsters::stats_test {
+    use std::string;
+    use mojo_monsters::element;
+    use mojo_monsters::affinity;
+    use mojo_monsters::i64::{pos, neg, zero, equals};
+    use mojo_monsters::test_utils;
+    use mojo_monsters::stats;
 
-    #[test_only]
-    public(friend) fun init_module_for_test(deployer: &signer) {
-        init_module(deployer);
-    }
-
-    #[test(deployer=@mojo_monsters)]
+    #[test(deployer = @mojo_monsters, aptos_framework = @0x1)]
     fun test_modifiers(
         deployer: &signer,
-    ) acquires AttributeModifiers {
-        init_module_for_test(deployer);
+        aptos_framework: &signer,
+    ) {
+        test_utils::setup_test(deployer, aptos_framework);
         // singular modifiers
-        assert!(get_modifier<element::Fire>(string::utf8(b"MAX_ENERGY")) == pos(20), 0);
-        assert!(get_modifier<element::Air>(string::utf8(b"MAX_ENERGY")) == neg(10), 0);
-        assert!(get_modifier<affinity::Psyche>(string::utf8(b"IMMUNITY_THRESHOLD")) == neg(10), 0);
-        assert!(get_modifier<affinity::Adaptive>(string::utf8(b"IMMUNITY_THRESHOLD")) == pos(20), 0);
+        assert!(stats::get_modifier<element::Fire>(string::utf8(b"MAX_ENERGY")) == pos(20), 0);
+        assert!(stats::get_modifier<element::Air>(string::utf8(b"MAX_ENERGY")) == neg(10), 0);
+        assert!(stats::get_modifier<affinity::Psyche>(string::utf8(b"IMMUNITY_THRESHOLD")) == neg(10), 0);
+        assert!(stats::get_modifier<affinity::Adaptive>(string::utf8(b"IMMUNITY_THRESHOLD")) == pos(20), 0);
         // mojo modifiers
-        assert!(equals(get_mojo_modifier<element::Fire, affinity::Solid>(string::utf8(b"MAX_ENERGY")), pos(40)), 0);
-        assert!(equals(get_mojo_modifier<element::Ether, affinity::Disruptive>(string::utf8(b"ENERGY_EFFICIENCY")), zero()), 0);
+        assert!(equals(stats::get_mojo_modifier<element::Fire, affinity::Solid>(string::utf8(b"MAX_ENERGY")), pos(40)), 0);
+        assert!(equals(stats::get_mojo_modifier<element::Ether, affinity::Disruptive>(string::utf8(b"ENERGY_EFFICIENCY")), zero()), 0);
     }
-
 }

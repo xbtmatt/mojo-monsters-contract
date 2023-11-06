@@ -3,6 +3,9 @@ module mojo_monsters::player {
     use aptos_framework::object::{Object};
     use mojo_monsters::sack::{Sack};
     use aptos_std::simple_map::{SimpleMap};
+    use mojo_monsters::access_control;
+
+    friend mojo_monsters::initialize;
 
     struct Player has key {
         name: String,
@@ -41,5 +44,10 @@ module mojo_monsters::player {
         name: String,
         description: String,
         power: u64,
+    }
+
+    public(friend) fun init(director: &signer) {
+        access_control::assert_is_director(director);
+        //    
     }
 }

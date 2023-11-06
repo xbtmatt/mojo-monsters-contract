@@ -2,14 +2,19 @@
 module mojo_monsters::director {
     use std::signer;
     use aptos_framework::object;
+    use mojo_monsters::mojo_errors;
     use mojo_monsters::object_refs;
+
+    friend mojo_monsters::initialize;
 
     struct Director has key {
         director_addr: address,
     }
 
-    fun init_module(deployer: &signer) {
+    // see `start.move` for initial setup order
+    public(friend) fun init(deployer: &signer) {
         let deployer_addr = signer::address_of(deployer);
+        assert!(deployer_addr == @mojo_monsters, mojo_errors::not_authorized());
         let constructor_ref = object::create_object(deployer_addr);
         let (_, director_addr) = object_refs::create_refs<Director>(&constructor_ref);
         move_to(
@@ -30,8 +35,8 @@ module mojo_monsters::director {
         signer::address_of(director) == signer::address_of(&director_signer)
     }
 
-    #[test_only]
-    public fun init_module_for_test(deployer: &signer) {
-        init_module(deployer);
+    public fun is_director_object(given_director_addr: address): bool acquires Director {
+        let (_, director_addr) = get_director();
+        given_director_addr == director_addr
     }
 }
