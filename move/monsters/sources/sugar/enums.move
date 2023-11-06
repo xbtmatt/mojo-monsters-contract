@@ -2,72 +2,44 @@ module mojo_monsters::enums {
     use std::string::{Self, String};
     use aptos_std::type_info::{type_of};
     use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
-    use mojo_monsters::affinity::{Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
-    use std::error;
+    use mojo_monsters::affinity::{Balanced, Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
+    use mojo_monsters::type_discriminators;
+    use mojo_monsters::mojo_errors;
     use std::vector;
 
-    
-
-    /// You have provided an invalid type.
-    const E_INVALID_TYPE: u64 = 0;
-
     public inline fun get_element_names(): vector<String> {
-        // vector::map_ref(&ELEMENT_NAMES, |x| { string::utf8(*x) })
-        // we use the below because inline can't use enums
-        vector::map(vector<vector<u8>> [ b"FIRE", b"EARTH", b"WATER", b"AIR", b"CRYSTAL", b"ELECTRICITY", b"ETHER" ], |x| { string::utf8(x) })
+        vector<String> [ fire(), earth(), water(), air(), crystal(), electricity(), ether() ]
     }
 
     public inline fun get_affinity_names(): vector<String> {
-        // vector::map_ref(&AFFINITY_NAMES, |x| { string::utf8(*x) })
-        // we use the below because inline can't use enums
-        vector::map(vector<vector<u8>>[ b"SOLID", b"SWIFT", b"HARMONIC", b"PSYCHE", b"ADAPTIVE", b"DISRUPTIVE" ], |x| { string::utf8(x) })
+        vector<String>[ balanced(), solid(), swift(), harmonic(), psyche(), adaptive(), disruptive() ]
     }
 
     public inline fun get_attribute_names(): vector<String> {
         vector::map(vector<vector<u8>> [ b"MAX_ENERGY", b"ENERGY_RECHARGE_RATE", b"ENERGY_EFFICIENCY", b"MAX_HUNGER", b"HUNGER_RESISTANCE", b"MAX_JOY", b"JOY_RESPONSE", b"JOY_ABILITY", b"MAX_IMMUNITY", b"IMMUNITY_THRESHOLD", b"IMMUNITY_PERSISTENCE", b"MAX_INTELLIGENCE", b"INHERENT_INTELLIGENCE", b"INTELLIGENCE_POTENTIAL" ], |x| { string::utf8(x) })
     }
 
-    public inline fun fire(): String { string::utf8(b"FIRE") }
-    public inline fun earth(): String { string::utf8(b"EARTH") }
-    public inline fun water(): String { string::utf8(b"WATER") }
-    public inline fun air(): String { string::utf8(b"AIR") }
-    public inline fun crystal(): String { string::utf8(b"CRYSTAL") }
-    public inline fun electricity(): String { string::utf8(b"ELECTRICITY") }
-    public inline fun ether(): String { string::utf8(b"ETHER") }
+    public fun fire(): String { string::utf8(b"FIRE") }
+    public fun earth(): String { string::utf8(b"EARTH") }
+    public fun water(): String { string::utf8(b"WATER") }
+    public fun air(): String { string::utf8(b"AIR") }
+    public fun crystal(): String { string::utf8(b"CRYSTAL") }
+    public fun electricity(): String { string::utf8(b"ELECTRICITY") }
+    public fun ether(): String { string::utf8(b"ETHER") }
 
-    public inline fun solid(): String { string::utf8(b"SOLID") }
-    public inline fun swift(): String { string::utf8(b"SWIFT") }
-    public inline fun harmonic(): String { string::utf8(b"HARMONIC") }
-    public inline fun psyche(): String { string::utf8(b"PSYCHE") }
-    public inline fun adaptive(): String { string::utf8(b"ADAPTIVE") }
-    public inline fun disruptive(): String { string::utf8(b"DISRUPTIVE") }
-
-    public inline fun is_element_type<T>(): bool {
-        // elements
-        (type_of<T>() == type_of<Fire>())        ||
-        (type_of<T>() == type_of<Earth>())       ||
-        (type_of<T>() == type_of<Water>())       ||
-        (type_of<T>() == type_of<Air>())         ||
-        (type_of<T>() == type_of<Crystal>())     ||
-        (type_of<T>() == type_of<Electricity>()) ||
-        (type_of<T>() == type_of<Ether>())
-    }
-
-    public inline fun is_affinity_type<T>(): bool {
-        // affinities
-        (type_of<T>() == type_of<Solid>())       ||
-        (type_of<T>() == type_of<Swift>())       ||
-        (type_of<T>() == type_of<Harmonic>())    ||
-        (type_of<T>() == type_of<Psyche>())      ||
-        (type_of<T>() == type_of<Adaptive>())    ||
-        (type_of<T>() == type_of<Disruptive>())
-    }
+    public fun balanced(): String { string::utf8(b"BALANCED") }
+    public fun solid(): String { string::utf8(b"SOLID") }
+    public fun swift(): String { string::utf8(b"SWIFT") }
+    public fun harmonic(): String { string::utf8(b"HARMONIC") }
+    public fun psyche(): String { string::utf8(b"PSYCHE") }
+    public fun adaptive(): String { string::utf8(b"ADAPTIVE") }
+    public fun disruptive(): String { string::utf8(b"DISRUPTIVE") }
 
     public inline fun name<T>(): String {
         // elements
-        if (is_element_type<T>()) { element_name<T>() }
-        else if ( is_affinity_type<T>() ) { affinity_name<T>() }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        if (type_discriminators::is_an_element<T>()) { element_name<T>() }
+        else if ( type_discriminators::is_an_affinity<T>() ) { affinity_name<T>() }
+        else { abort mojo_errors::invalid_type() }
     }
     
     public inline fun element_name<T>(): String {
@@ -79,17 +51,18 @@ module mojo_monsters::enums {
         else if (type_of<T>() == type_of<Crystal>())     { crystal() }
         else if (type_of<T>() == type_of<Electricity>()) { electricity() }
         else if (type_of<T>() == type_of<Ether>())       { ether() }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        else { abort mojo_errors::invalid_type() }
     }
 
     public inline fun affinity_name<T>(): String {
-             if (type_of<T>() == type_of<Solid>())       { solid() }
+             if (type_of<T>() == type_of<Balanced>())    { balanced() }
+        else if (type_of<T>() == type_of<Solid>())       { solid() }
         else if (type_of<T>() == type_of<Swift>())       { swift() }
         else if (type_of<T>() == type_of<Harmonic>())    { harmonic() }
         else if (type_of<T>() == type_of<Psyche>())      { psyche() }
         else if (type_of<T>() == type_of<Adaptive>())    { adaptive() }
         else if (type_of<T>() == type_of<Disruptive>())  { disruptive() }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        else { abort mojo_errors::invalid_type() }
     }
 
     // public inline fun element<T>(): u8 {
@@ -101,18 +74,19 @@ module mojo_monsters::enums {
         else if (type_of<T>() == type_of<Crystal>())     { 4 }
         else if (type_of<T>() == type_of<Electricity>()) { 5 }
         else if (type_of<T>() == type_of<Ether>())       { 6 }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        else { abort mojo_errors::invalid_type() }
     }
     
     // public inline fun affinity<T>(): u8 {
     public fun affinity<T>(): u8 {
-             if (type_of<T>() == type_of<Solid>())       { 0 }
-        else if (type_of<T>() == type_of<Swift>())       { 1 }
-        else if (type_of<T>() == type_of<Harmonic>())    { 2 }
-        else if (type_of<T>() == type_of<Psyche>())      { 3 }
-        else if (type_of<T>() == type_of<Adaptive>())    { 4 }
-        else if (type_of<T>() == type_of<Disruptive>())  { 5 }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+             if (type_of<T>() == type_of<Balanced>())    { 0 }
+        else if (type_of<T>() == type_of<Solid>())       { 1 }
+        else if (type_of<T>() == type_of<Swift>())       { 2 }
+        else if (type_of<T>() == type_of<Harmonic>())    { 3 }
+        else if (type_of<T>() == type_of<Psyche>())      { 4 }
+        else if (type_of<T>() == type_of<Adaptive>())    { 5 }
+        else if (type_of<T>() == type_of<Disruptive>())  { 6 }
+        else { abort mojo_errors::invalid_type() }
     }
 
     // public inline fun element_name_index(s: String): u8 {
@@ -124,17 +98,18 @@ module mojo_monsters::enums {
         else if (s == crystal())     { 4 }
         else if (s == electricity()) { 5 }
         else if (s == ether())       { 6 }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        else { abort mojo_errors::invalid_type() }
     }
 
     public inline fun affinity_name_index(s: String): u8 {
-             if (s == solid())       { 0 }
-        else if (s == swift())       { 1 }
-        else if (s == harmonic())    { 2 }
-        else if (s == psyche())      { 3 }
-        else if (s == adaptive())    { 4 }
-        else if (s == disruptive())  { 5 }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+             if (s == balanced())    { 0 }
+        else if (s == solid())       { 1 }
+        else if (s == swift())       { 2 }
+        else if (s == harmonic())    { 3 }
+        else if (s == psyche())      { 4 }
+        else if (s == adaptive())    { 5 }
+        else if (s == disruptive())  { 6 }
+        else { abort mojo_errors::invalid_type() }
     }
 
     // public inline fun attribute(s: String): u8 {
@@ -153,7 +128,7 @@ module mojo_monsters::enums {
         else if (s == string::utf8(b"MAX_INTELLIGENCE"))        { 11 }
         else if (s == string::utf8(b"INHERENT_INTELLIGENCE"))   { 12 }
         else if (s == string::utf8(b"INTELLIGENCE_POTENTIAL"))  { 13 }
-        else { abort error::invalid_argument(0) } // E_INVALID_TYPE
+        else { abort mojo_errors::invalid_type() }
     }
 }
 
@@ -162,9 +137,9 @@ module mojo_monsters::enums_tests {
 
     #[test_only] use std::string::{Self};
     #[test_only] use mojo_monsters::element::{Fire, Earth, Water, Air, Crystal, Electricity, Ether};
-    #[test_only] use mojo_monsters::affinity::{Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
+    #[test_only] use mojo_monsters::affinity::{Balanced, Solid, Swift, Harmonic, Psyche, Adaptive, Disruptive};
     #[test_only] use mojo_monsters::enums::{element_name, affinity_name, element_name_index, element, affinity, affinity_name_index, get_element_names, get_affinity_names, get_attribute_names};
-    #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
+    #[test_only] use mojo_monsters::enums::{fire, earth, water, air, crystal, electricity, ether, balanced, solid, swift, harmonic, psyche, adaptive, disruptive, attribute};
 
     // Elements
     // ---------------------------------------------------------------
@@ -178,6 +153,7 @@ module mojo_monsters::enums_tests {
 
     // Affinities
     // ---------------------------------------------------------------
+    #[test_only] const BALANCED: vector<u8> = b"BALANCED";
     #[test_only] const SOLID: vector<u8> = b"SOLID";
     #[test_only] const SWIFT: vector<u8> = b"SWIFT";
     #[test_only] const HARMONIC: vector<u8> = b"HARMONIC";
@@ -212,6 +188,7 @@ module mojo_monsters::enums_tests {
         assert!(element_name<Electricity>() == electricity(), 0);
         assert!(element_name<Ether>() == ether(), 0);
 
+        assert!(affinity_name<Balanced>() == balanced(), 0);
         assert!(affinity_name<Solid>() == solid(), 0);
         assert!(affinity_name<Swift>() == swift(), 0);
         assert!(affinity_name<Harmonic>() == harmonic(), 0);
@@ -227,6 +204,7 @@ module mojo_monsters::enums_tests {
         assert!(element_name_index(element_name<Electricity>()) == element<Electricity>(), 0);
         assert!(element_name_index(element_name<Ether>()) == element<Ether>(), 0);
 
+        assert!(affinity_name_index(affinity_name<Balanced>()) == affinity<Balanced>(), 0);
         assert!(affinity_name_index(affinity_name<Solid>()) == affinity<Solid>(), 0);
         assert!(affinity_name_index(affinity_name<Swift>()) == affinity<Swift>(), 0);
         assert!(affinity_name_index(affinity_name<Harmonic>()) == affinity<Harmonic>(), 0);
@@ -254,12 +232,14 @@ module mojo_monsters::enums_tests {
         assert!(crystal() == string::utf8(CRYSTAL), 4);
         assert!(electricity() == string::utf8(ELECTRICITY), 5);
         assert!(ether() == string::utf8(ETHER), 6);
-        assert!(solid() == string::utf8(SOLID), 7);
-        assert!(swift() == string::utf8(SWIFT), 8);
-        assert!(harmonic() == string::utf8(HARMONIC), 9);
-        assert!(psyche() == string::utf8(PSYCHE), 10);
-        assert!(adaptive() == string::utf8(ADAPTIVE), 11);
-        assert!(disruptive() == string::utf8(DISRUPTIVE), 12);
+
+        assert!(balanced() == string::utf8(BALANCED), 7);
+        assert!(solid() == string::utf8(SOLID), 8);
+        assert!(swift() == string::utf8(SWIFT), 9);
+        assert!(harmonic() == string::utf8(HARMONIC), 10);
+        assert!(psyche() == string::utf8(PSYCHE), 11);
+        assert!(adaptive() == string::utf8(ADAPTIVE), 12);
+        assert!(disruptive() == string::utf8(DISRUPTIVE), 13);
 
         assert!(attribute(string::utf8(MAX_ENERGY)) == 0, 0);
         assert!(attribute(string::utf8(ENERGY_RECHARGE_RATE)) == 1, 1);

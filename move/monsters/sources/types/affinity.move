@@ -1,4 +1,5 @@
 module mojo_monsters::affinity {
+    struct Balanced has key { }
     struct Solid has key { }
     struct Swift has key { }
     struct Harmonic has key { }

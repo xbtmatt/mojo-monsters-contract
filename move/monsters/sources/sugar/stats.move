@@ -7,17 +7,16 @@ module mojo_monsters::stats {
     use mojo_monsters::enums;
     use mojo_monsters::i64::{pos, zero, neg, add_i64, add_assert_positive, I64};
     use mojo_monsters::utils::{transpose};
+    use mojo_monsters::mojo_errors;
+    use mojo_monsters::type_discriminators;
 
     #[test_only] friend mojo_monsters::test_setup;
 
-    /// You are not authorized to perform this action.
-    const E_NOT_AUTHORIZED: u64 = 0;
+
     /// Vector lengths do not match.
     const E_VECTOR_LENGTHS_DO_NOT_MATCH: u64 = 1;
     /// Not enough types to match the number of enums required.
     const E_INCORRECT_NUM_ENUMS: u64 = 2;
-    /// You've passed in an invalid type.
-    const E_INVALID_TYPE: u64 = 2;
 
     struct AttributeModifiers has key {
         inner: SimpleMap<String, SimpleMap<String, I64>>,
@@ -32,7 +31,8 @@ module mojo_monsters::stats {
             vector<I64> [ neg(10), zero(),  pos(10), zero(),  neg(10), zero(),  pos(20), zero(),  zero(), zero(),  zero(),  zero(), zero(),  zero()  ],  // Air
             vector<I64> [ zero(),  zero(),  pos(10), zero(),  zero(),  zero(),  zero(),  zero(),  zero(), pos(10), pos(10), zero(), pos(10), zero()  ],  // Crystal
             vector<I64> [ pos(30), pos(30), pos(30), zero(),  neg(20), pos(20), pos(20), zero(),  zero(), zero(),  zero(),  zero(), zero(),  zero()  ],  // Electricity
-            vector<I64> [ pos(20), zero(),  pos(20), zero(),  pos(20), neg(20), neg(20), zero(),  zero(), pos(20), pos(20), zero(), pos(20), pos(20) ],  // Etherther
+            vector<I64> [ pos(20), zero(),  pos(20), zero(),  pos(20), neg(20), neg(20), zero(),  zero(), pos(20), pos(20), zero(), pos(20), pos(20) ],  // Ether
+            vector<I64> [ zero(), zero(), zero(), zero(),  zero(),  zero(),  zero(),  zero(),  zero(), zero(),  zero(), zero(), zero(),  zero()  ],  // Balanced
             vector<I64> [ pos(20), neg(10), neg(10), zero(),  zero(),  zero(),  zero(),  zero(),  zero(), zero(),  pos(10), zero(), zero(),  zero()  ],  // Solid
             vector<I64> [ zero(),  pos(20), zero(),  zero(),  neg(20), zero(),  pos(10), zero(),  zero(), zero(),  neg(10), zero(), zero(),  zero()  ],  // Swift
             vector<I64> [ neg(10), zero(),  pos(10), zero(),  pos(10), zero(),  pos(20), pos(20), zero(), zero(),  zero(),  zero(), zero(),  zero()  ],  // Harmonic
@@ -57,7 +57,7 @@ module mojo_monsters::stats {
 
 
     fun init_module(deployer: &signer) {
-        assert!(signer::address_of(deployer) == @mojo_monsters, error::permission_denied(E_NOT_AUTHORIZED));
+        assert!(signer::address_of(deployer) == @mojo_monsters, mojo_errors::not_authorized());
 
         let inner_keys = vector<String> [];
         vector::append(&mut inner_keys, enums::get_element_names());
@@ -85,7 +85,7 @@ module mojo_monsters::stats {
     }
 
     fun get_modifier<ElementOrAttribute>(attribute: String): I64 acquires AttributeModifiers {
-        assert!(enums::is_element_type<ElementOrAttribute>() || enums::is_affinity_type<ElementOrAttribute>(), error::invalid_argument(E_INVALID_TYPE));
+        assert!(type_discriminators::is_an_element<ElementOrAttribute>() || type_discriminators::is_an_affinity<ElementOrAttribute>(), mojo_errors::invalid_type());
         let _indirect_assertion = enums::attribute(attribute);
         let attribute_modifiers = borrow_global<AttributeModifiers>(@mojo_monsters);
         assert!(simple_map::contains_key(&attribute_modifiers.inner, &attribute), 0);
@@ -96,7 +96,6 @@ module mojo_monsters::stats {
 
 
     public fun get_mojo_modifier<Element, Affinity>(attribute: String): I64 acquires AttributeModifiers {
-        assert!(enums::is_element_type<Element>() || enums::is_affinity_type<Affinity>(), error::invalid_argument(E_INVALID_TYPE));
         let element_modifier = get_modifier<Element>(attribute);
         let affinity_modifier = get_modifier<Affinity>(attribute);
         add_i64(element_modifier, affinity_modifier)
