@@ -97,11 +97,12 @@ module mojo_monsters::vitals {
     #[test_only] use mojo_monsters::vitals;
     #[test_only] use mojo_monsters::enums;
 
-    #[test(deployer = @mojo_monsters)]
+    #[test(deployer = @mojo_monsters, aptos_framework = @0x1)]
     fun test_happy_path(
-        deployer: &signer
+        deployer: &signer,
+        aptos_framework: &signer,
     ) acquires Vitals {
-        mojo_monsters::test_setup::init(deployer);
+        mojo_monsters::test_setup::init(deployer, aptos_framework);
         let deployer_addr = signer::address_of(deployer);
         init_vitals<element::Fire, affinity::Harmonic>(deployer);
         let element_name = enums::name<element::Fire>();

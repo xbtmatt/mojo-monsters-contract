@@ -2,7 +2,9 @@
 module mojo_monsters::test_setup {
     use aptos_framework::features;
 
-    public fun init(deployer: &signer) {
+    public fun init(deployer: &signer, aptos_framework: &signer) {
+        enable_features_for_test(aptos_framework);
+        mojo_monsters::director::init_module_for_test(deployer);
         mojo_monsters::stats::init_module_for_test(deployer);
     }
 

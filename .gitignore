@@ -2,6 +2,8 @@ move/monsters/build/**
 move/**/build/**
 move/misc/**/build/**
 move/aptos_framework/
+move/monsters/notes.txt
+
 
 
 # Rust specific ignores

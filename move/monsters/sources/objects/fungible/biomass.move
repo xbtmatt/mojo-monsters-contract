@@ -2,12 +2,22 @@ module mojo_monsters::biomass {
     use std::signer;
     use mojo_monsters::object_refs;
     use mojo_monsters::type_discriminators;
+    use mojo_monsters::access_control;
     use aptos_framework::object::{Self, Object};
     use aptos_token_objects::token::{Token};
 
-    struct Biomass<phantom Element, phantom Affinity> has key {
+    struct Biomass<phantom Element, phantom Affinity> has key { }
+
+    public(friend) fun create_base_fungible_token(director: &signer) {
+        access_control::assert_is_director(director);
 
     }
+
+    // public fun get_biomass_metadata<Element, Affinity>(obj_addr: address): address acquires Biomass {
+        // borrow_global<Biomass<Element, Affinity>>(obj_addr);
+        // obj_addr
+    // }
+
 
     public(friend) fun create<Element, Affinity>(
         for: &signer,

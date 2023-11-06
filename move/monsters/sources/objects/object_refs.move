@@ -6,6 +6,7 @@ module mojo_monsters::object_refs {
     use std::error;
 
     friend mojo_monsters::player;
+    friend mojo_monsters::director;
     friend mojo_monsters::sack;
     friend mojo_monsters::cauldron;
     friend mojo_monsters::biomass;
